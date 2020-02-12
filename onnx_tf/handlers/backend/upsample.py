@@ -12,7 +12,7 @@ from onnx_tf.handlers.handler import tf_func
 
 
 @onnx_op("Upsample")
-@tf_func(tf.image.resize_images)
+@tf_func(tf.image.resize)
 @partial_support(True)
 @ps_description("Upsample required 4D input in Tensorflow.")
 class Upsample(BackendHandler):

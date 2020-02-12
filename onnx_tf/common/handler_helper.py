@@ -5,7 +5,6 @@ from onnx import defs
 from onnx_tf.handlers.backend import *  # noqa
 from onnx_tf.handlers.backend_handler import BackendHandler
 
-
 def get_all_backend_handlers(opset_dict):
   """ Get a dict of all backend handler classes.
   e.g. {'domain': {'Abs': Abs handler class}, ...}, }.

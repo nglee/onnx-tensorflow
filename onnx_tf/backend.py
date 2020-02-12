@@ -120,7 +120,7 @@ class TensorflowBackend(Backend):
             ":", "_tf_") + "_" + get_unique_suffix(
             ) if ":" in value_info.name else value_info.name
 
-        x = tf.placeholder(
+        x = tf.compat.v1.placeholder(
             data_type.onnx2tf(value_info.type.tensor_type.elem_type),
             name=value_info_name,
             shape=shape)
