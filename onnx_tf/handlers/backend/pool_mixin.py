@@ -40,6 +40,17 @@ class PoolMixin(object):
     # from version 7
     count_include_pad = node.attrs.get("count_include_pad", 0)
 
+    # Temporary Fix
+    # In tf, if odd padding, then the one extra padding is always added
+    # to the "end"
+    # Case to be handled
+    #if (kernel_shape[0] == 3 and kernel_shape[1] == 3):
+    #  if pads == [1, 1, 0, 0], then change it to [0, 0, 1, 1]
+    for i in range(len(kernel_shape)):
+      end_idx = i + len(kernel_shape)
+      if (pads[i] > pads[end_idx]):
+        pads[i], pads[end_idx] = pads[end_idx], pads[i]
+
     auto_pad = node.attrs.get("auto_pad", "NOTSET")
     # if auto_pad is NOTSET, we check pads
     if auto_pad == "NOTSET":
