@@ -235,6 +235,14 @@ class TensorflowBackend(Backend):
     """
     handlers = handlers or cls._get_handlers(opset)
     handler = handlers[node.domain].get(node.op_type, None)
+
+    # Temporary fix
+    # If node name starts with "_", then prepend something since it is not allowed in tf
+    if (node.name[0] == '_'):
+      print("node name {} is not compatible with tf".format(node.name))
+      node.name = "guard" + node.name
+      print("node name changed to {}".format(node.name))
+
     if handler:
       return handler.handle(node, tensor_dict=tensor_dict, strict=strict)
     else:
