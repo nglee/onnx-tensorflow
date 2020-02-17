@@ -203,6 +203,22 @@ class OnnxNode(object):
     self.outputs = list(node.output)
     self.node_proto = node
 
+    for i in range(len(self.inputs)):
+      if "[" in self.inputs[i] or "]" in self.inputs[i]:
+        self.inputs[i] = self.inputs[i].replace("[",".")
+        self.inputs[i] = self.inputs[i].replace("]",".")
+
+        if (self.inputs[i][0] == '_'):
+          self.inputs[i] = "guard" + self.inputs[i]
+
+    for i in range(len(self.outputs)):
+      if "[" in self.outputs[i] or "]" in self.outputs[i]:
+        self.outputs[i] = self.outputs[i].replace("[",".")
+        self.outputs[i] = self.outputs[i].replace("]",".")
+
+        if (self.outputs[i][0] == '_'):
+          self.outputs[i] = "guard" + self.outputs[i]
+
 
 class OnnxGraph(object):
   """ A helper class for making ONNX graph.

@@ -131,6 +131,22 @@ class TensorflowBackend(Backend):
       # This dictionary will get updated as we build the graph to
       # record the names of newly produced tensors.
       tensor_dict = dict(input_dict_items)
+
+      new_dict = dict()
+      for key, val in tensor_dict.items():
+        if "[" in key or "]" in key:
+          new_key = key.replace("[",".")
+          new_key = new_key.replace("]",".")
+
+          if (new_key[0] == '_'):
+            new_key = "guard" + new_key
+
+          new_tensor = tf.identity(val, name=new_key)
+          new_dict[new_key] = new_tensor
+        else:
+          new_dict[key] = val
+      tensor_dict = new_dict
+
       # Since tensor dict may be updated, we need to keep a copy
       # of the original input dict where we track the earliest
       # defined tensors so we can have access to the placeholders
@@ -205,12 +221,20 @@ class TensorflowBackend(Backend):
       # Use the onnx.numpy_helper because the data may be raw
       return numpy_helper.to_array(onnx_tensor).flatten().tolist()
 
+    def nameChecker(name):
+      if "[" in name or "]" in name:
+        name = name.replace("[",".")
+        name = name.replace("]",".")
+        if (name[0] == '_'):
+          name = "guard" + name
+      return name
+
     return [(init.name,
              tf.constant(
                  tensor2list(init),
                  shape=init.dims,
                  dtype=data_type.onnx2tf(init.data_type),
-                 name=init.name))
+                 name=nameChecker(init.name)))
             for init in initializer]
 
   @classmethod
